@@ -1,0 +1,78 @@
+{% if not IS_BASED -%}
+	{% extends "base.html" -%}
+{% endif -%}
+
+{% block body %}
+<section id="user">
+<h2>{{ msg('userstat') }} <small>({{ msg('as-of-%s', '<time>' +  userdata.timestamp|string + '</time>')|safe }})</small></h2>
+<img src="{{ userdata.knit_jubility_icon_path }}" width="113" height="113" alt="{{ userdata.jubility_icon }}" class="u-jubilityicon" />
+<p><strong class="u-playername">{{ userdata.card_name }}</strong>
+	{%- if g.more -%}
+		<small>(<a href="https://www.ea-pass.konami.net/contents/jubeat/knit/play_top.do?fid={{ userdata.friend_id }}&amp;blog=1" class="u-fid">{{ userdata.friend_id }}></a>)</small>
+	{%- endif -%}
+</p>
+{%- if g.diffusername -%}
+<p class="rival"><span class="u-vs">vs </span><strong class="u-playername">{{ g.diffdata.card_name }}</strong>
+	{%- if g.more -%}
+		<small>(<a href="https://www.ea-pass.konami.net/contents/jubeat/knit/play_top.do?fid={{ diff_user.friend_id }}&amp;blog=1" class="u-fid">{{ diff_user.friend_id }}</a>)</small>
+	{%- endif -%}
+</p>
+{%- endif %}
+<p><span class="label">{{ link_stat('title') }}:</span> <span class="u-title">{{ userdata.title }}</span> |
+	<span class="label">{{ link_stat('group_name') }}:</span> {% if userdata.group_name %}<span class="u-group">{{ userdata.group_name }}</span>{% else %}<span class="u-group u-nogroup">{{ msg('no-group') }}</span>{% endif %} |
+	<span class="label">{{ link_stat('marker') }}:</span> <span class="u-marker"><img src="{{ userdata.knit_marker_path }}" width="48" height="30" alt="" /> {{ l10n(userdata.marker) }}</span> |
+	<span class="label">{{ link_stat('background') }}:</span> <span class="u-back">{{ l10n(userdata.background) }}</span></p>
+<p><span class="label">{{ msg('last_play') }}</span> <span class="u-area">{{ msg(userdata.last_location) }}</span> <small>(<time class="u-lastplay">{{ userdata.last_date|string }}</time>)</small></p>
+
+<ul>
+<li><span class="label">{{ link_statrank('jubility') }} ({{ msg('jubility_diff_short') }})</span>
+	<span class="i u-jubility">{{ user_stat_diff('jubility') }}</span>
+	<span class="is">(</span>
+	<span class="i u-jubilitydiff">{{ user_stat_diff('jubility_diff', False) }}</span>
+	<span class="is">)</span></li>
+<li><span class="label">{{ link_statrank('achievement_point') }} ({{ link_statrank('achievement_rank') }})</span>
+	<span class="i u-points">{{ user_stat_diff('achievement_point') }}</span>
+	<span class="is">(</span>
+	<span class="i u-pointsrank">{{ user_stat_diff('achievement_rank', reverse=True) }}</span>
+	<span class="is">)</span></li>
+<li><span class="label">{{ link_statrank('matched_victory_count', 'matched_victory_count_short') }}/{{ link_statrank('matched_player_count', 'matched_player_count_short') }}</span>
+	<span class="i u-matchingwin">{{ user_stat_diff('matched_victory_count') }}</span>
+	<span class="is">/</span>
+	<span class="i u-matching">{{ user_stat_diff('matched_player_count') }}</span></li>
+</ul>
+
+<ul>
+<li><span class="label">{{ link_statrank('clear_count', 'clear_count_short') }}/{{ link_statrank('play_count', 'play_count_short') }}</span>
+	<span class="i u-nclears">{{ user_stat_diff('clear_count') }}</span>
+	<span class="is">/</span>
+	<span class="i u-nplays">{{ user_stat_diff('play_count') }}</span></li>
+<li><span class="label">{{ msg('fullcombo') }} {{ link_statrank('fullcombo_count', 'counts') }}/{{ link_statrank('fullcombo_tune_count', 'tunes') }}</span>
+	<span class="i u-nfcs">{{ user_stat_diff('fullcombo_count') }}</span>
+	<span class="is">/</span>
+	<span class="i u-nfcsongs">{{ user_stat_diff('fullcombo_tune_count') }}</span></li>
+<li><span class="label">{{ msg('excellent') }} {{ link_statrank('excellent_count', 'counts') }}/{{ link_statrank('excellent_tune_count', 'tunes') }}</span>
+	<span class="i u-nexcs">{{ user_stat_diff('excellent_count') }}</span>
+	<span class="is">/</span>
+	<span class="i u-nexcsongs">{{ user_stat_diff('excellent_tune_count') }}</span></li>
+<li><span class="label">{{ link_statrank('save_count', 'save_count_short') }}</span>
+	<span class="i u-nsaves">{{ user_stat_diff('save_count') }}</span></li>
+<li><span class="label">{{ link_statrank('saved_count', 'saved_count_short') }}</span>
+	<span class="i u-nsaveds">{{ user_stat_diff('saved_count') }}</span></li>
+</ul>
+
+<ul>
+{% for stat in stats -%}
+<li><span class="label">{{ link_statrank(stat[0]) }}<sup>{{ loop.index0 + 1 }})</sup></span>
+    <span class="i u-nderived">{{ user_stat_diff(stat[0], reverse=stat[2].reverse) }}</span></li>
+{% endfor -%}
+</ul>
+
+<ol style="clear:both">
+{%- for ref in refs %}
+<li>{{ loop.index0 + 1 }}) {{ msg(ref[0]) }}: {{ msg(ref[1]) }}</li>
+{%- endfor %}
+</ol>
+
+<div class="strut"></div>
+</section>
+{% endblock %}

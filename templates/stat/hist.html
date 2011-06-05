@@ -1,0 +1,27 @@
+{% if not IS_BASED -%}
+    {% extends "base.html" -%}
+{% endif -%}
+
+{% block body %}
+<section id="stat-hist">
+<h2>{{ msg('History') }}: {{ subtitle }}</h2>
+<div class="graph-right">
+<table class="graph-dataset">
+<thead>
+<tr><th>Date</th><th>Value</th></tr>
+</thead>
+<tbody>
+{%- for key, r in history.iteritems() %}
+<tr data-k="{{ key }}"
+	{%- if r.value %}{{ {'data-v':r.value}|xmlattr }}{% endif %}
+	{%- if r.diffvalue %}{{ {'data-v2':r.diffvalue}|xmlattr }}{% endif %}>
+	<th>{{ r.label }}</th>
+	<td>{%- if r.value %}<span class="v1">{{ r.value }}</span>{% endif %}
+		{%- if r.diffvalue %}<span class="v2"><span>(</span>{{ r.diffvalue }}<span>)</span></span>{% endif %}</td></tr>
+{%- endfor %}
+</tbody>
+</table>
+</div>
+</section>
+{% endblock %}
+

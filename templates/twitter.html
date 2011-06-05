@@ -1,0 +1,42 @@
+{% if not IS_BASED -%}
+	{% extends "base.html" -%}
+{% endif -%}
+
+{% block body %}
+<section id="twitter-widget">
+<h2>News</h2>
+<div>
+<script src="http://widgets.twimg.com/j/2/widget.js"></script>
+<script>
+new TWTR.Widget({
+  version: 2,
+  type: 'faves',
+  rpp: 12,
+  interval: 6000,
+  //title: 'News',
+  width: 250,
+  height: 780,
+  theme: {
+    shell: {
+      background: '#ffcc00',
+      color: '#000000'
+    },
+    tweets: {
+      background: '#ffee55',
+      color: '#000000',
+      links: '#888888'
+    }
+  },
+  features: {
+    scrollbar: false,
+    loop: false,
+    live: false,
+    hashtags: true,
+    timestamp: true,
+    behavior: 'all'
+  }
+}).render().setUser('JubeatInfo').start();
+</script>
+</div>
+</section>
+{% endblock %}

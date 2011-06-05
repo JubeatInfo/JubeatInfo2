@@ -1,0 +1,25 @@
+{% extends "graph/ .html" %}
+
+{% if not xfmt %}
+	{% set xfmt = xform('natural') %}
+{% endif %}
+
+{% block section_id %}history{% endblock %}
+{% block section_title %}{{ msg('History for %s', subtitle) }}{% endblock %}
+{% block data_name %}Date{% endblock %}
+
+{% block data_rows %}
+{%- for key, r in history.iteritems() %}
+<tr data-k="{{ key }}"
+	{%- if r.label|string == g.date %}{{ {'class':'highlight'}|xmlattr }}{% endif %}
+	{%- if r.value %}{{ {'data-v':r.value}|xmlattr }}{% endif %}
+	{%- if r.diffvalue %}{{ {'data-v2':r.diffvalue}|xmlattr }}{% endif %}>
+	<th>{{ r.label }}</th>
+	<td>
+	{%- if r.value %}<span class="v1">{{ r.value|xformat(xfmt) }}</span>{% endif %}
+	{%- if r.diffvalue %}<span class="v2"><span>(</span>{{ r.diffvalue|xformat(xfmt) }}<span>)</span></span>{% endif %}</td></tr>
+{%- endfor %}
+{% endblock %}
+
+{% block gather_func %}get_history{% endblock %}
+{% block gather_options %}'history'{% endblock %}

@@ -1,0 +1,8 @@
+
+# local settings
+database/secret.py
+env
+
+# dummy files
+*.pyc
+.*.swp

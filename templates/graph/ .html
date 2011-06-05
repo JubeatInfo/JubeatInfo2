@@ -1,0 +1,19 @@
+{% if not IS_BASED -%}
+	{% extends "base.html" -%}
+{% endif -%}
+
+{% block body %}
+<section id="{% block section_id %}graph{% endblock %}">
+<h2>{% block section_title %}{{ msg('graph') }}{% endblock %}</h2>
+<div class="graph-left"></div>
+<div class="graph-right">
+<table class="graph-dataset" data-fmt="{{ xfmt|tojson }}">
+<thead>
+<tr><th>{% block data_name %}Data{% endblock %}</th><th>Value</th></tr>
+</thead>
+<tbody>{% block data_rows %}{% endblock %}</tbody>
+</table>
+<script>/*<![CDATA[*/graph_init({% block gather_func %}get_graph_data{% endblock %}, {% block gather_options %}{% endblock %});/*]]>*/</script>
+</div>
+</section>
+{% endblock %}

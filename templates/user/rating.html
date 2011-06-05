@@ -1,0 +1,66 @@
+{% if not IS_BASED -%}
+	{% extends "base.html" -%}
+{% endif -%}
+
+{% set stats = score.stats -%}
+{% block body %}
+<section id="stat-rating">
+<h2>{{ msg('statistics') }}</h2>
+<div class="scroll">
+<table>
+<thead>
+<tr class="ratings">
+	<th></th>
+	{%- for gkey, grade in g.const.GRADES|dictsort|reverse if stats.grade[gkey].count %}
+	<th colspan="{{ stats.ver_ids|length }}">{{ grade }}</th>
+	{%- endfor %}
+</tr>
+<tr class="diffs">
+	<th></th>
+	{%- for gkey in g.const.GRADE_KEYS if stats.grade[gkey].count %}
+	{%- for ver_id in g.const.VERSION_RANGE|reverse if stats.ver[ver_id].count %}
+	<th{% if g.const.VERSION_NAMES[ver_id] != g.const.VERSION_CLASSES[ver_id] %}{{ {'class':"ver-ap"}|xmlattr }}{% endif %}>{{ g.const.VERSION_NAMES[ver_id] }}</th>
+	{%- endfor %}
+	<th>{{ msg('total') }}</th>
+	{% endfor %}
+</tr>
+</thead>
+<tbody>
+{%- for dif_id, dif in g.const.DIFFICULTY_KEYS|dictsort %}
+<tr>
+	<th class="{{ dif }}">{{ dif|upper }}</th>
+	{% for gkey, grade in g.const.GRADES|dictsort|reverse if stats.grade[gkey].count %}
+	{%- for ver_id in g.const.VERSION_RANGE2|reverse if stats.ver[ver_id].count %}
+	<td><span class="{{ dif }}{{ ' z'|if(stats.verdifgrade[ver_id][dif_id][gkey].count == 0) }}">{{ stats.verdifgrade[ver_id][dif_id][gkey].count }}</span>/<span class="{{ dif }}"><small>{{ stats.verdifgrade[ver_id][dif_id][gkey].accum }}</small></span></td>
+	{%- endfor %}
+	{% endfor %}
+</tr>
+{%- endfor %}
+</tbody>
+<tbody>
+{%- for lv in range(10, 0, -1) %}
+<tr>
+	<th class="lv{{ lv }}">Lv{{ lv }}</th>
+	{% for gkey, grade in g.const.GRADES|dictsort|reverse if stats.grade[gkey].count %}
+	{%- for ver_id in g.const.VERSION_RANGE2|reverse if stats.ver[ver_id].count %}
+	<td><span class="lv{{ lv }}{{ ' z'|if(stats.verlvgrade[ver_id][lv][gkey].count == 0) }}">{{ stats.verlvgrade[ver_id][lv][gkey].count }}</span>/<span class="lv{{ lv }}"><small>{{ stats.verlvgrade[ver_id][lv][gkey].accum }}</small></span></td>
+	{%- endfor %}
+	{% endfor %}
+</tr>
+{%- endfor %}
+</tbody>
+<tfoot>
+<tr>
+	<th class="tot">TOT</th>
+	{% for gkey, grade in g.const.GRADES|dictsort|reverse if stats.grade[gkey].count %}
+	{%- for ver_id in g.const.VERSION_RANGE2|reverse if stats.ver[ver_id].count %}
+	<td><span class="tot{{ ' z'|if(stats.vergrade[ver_id][gkey].count == 0) }}">{{ stats.vergrade[ver_id][gkey].count }}</span>/<span class="tot"><small>{{ stats.vergrade[ver_id][gkey].accum }}</small></span></td>
+
+	{%- endfor %}
+	{% endfor %}
+</tr>
+</tfoot>
+</table>
+</div>
+</section>
+{% endblock %}

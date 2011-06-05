@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html{% block html_attr %}{{ {'lang':g.lang}|xmlattr }}{% endblock %}>
+<head>
+<meta charset="utf-8" />
+	<title>{% block title %}JubeatInfo{% if subtitle %} - {{ subtitle }}{% elif user %} - {{ user.alias }}{% endif %}{% endblock %}</title>
+	<link rel="shortcut icon" href="{{ url_for('.favicon') }}" />
+	<link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='jubeatinfo.css') }}?{{ mtime('/jubeatinfo.css') }}" />
+	<script type="text/javascript" src="{{ url_for('.static', filename='libraries.js') }}?{{ mtime('/libraries.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('.static', filename='jubeatinfo.js') }}?{{ mtime('/jubeatinfo.js') }}"></script>
+</head> 
+
+<body class="ver-{{ g.info_ver }}">
+<header>
+<form action="{{ url_for('.select') }}" method="get">
+	<hgroup>
+	{{ params_hidden_value(ver=g.info_ver) }}
+	<h1 class="selecting-user">
+		<a href="{{ url_for('index') }}{{ params() }}"><span class="logo"><img src="{{ url_for('.static_image', filename='logo_title.png') }}" width="40" height="40" alt="" /></span>JubeatInfo</a>
+		{% if user -%}
+			: <span class="for-disabled"><a href="{{ url_for('user', username=g.username) }}{{ params() }}">{{ user.alias }}</a></span>
+		{%- endif %}
+		<span>(</span><input type="text" name="alias" class="for-enabled" /> <input type="submit" value="{{ msg('select_user') }}" onclick="return select_user()" /><span>)</span>
+	</h1>
+	<div id="lang">
+		[<a href="{{ params(lang='en') }}" lang="en">English</a>]
+		[<a href="{{ params(lang='ko') }}" lang="ko">한국어</a>]
+		[<a href="{{ params(lang='zh-tw') }}" lang="zh-hant">中文(正體)</a>]
+		<a href="http://www.twitter.com/JubeatInfo"><img src="http://twitter-badges.s3.amazonaws.com/t_small-c.png" width="22" height="22" alt="Follow JubeatInfo on Twitter"/></a>
+	</div>
+	<div class="strut"></div>
+	</hgroup>
+</form>
+<script>/*<![CDATA[*/load_canvas();{% if user %}$('h1').removeClass('selecting-user');{% endif %}/*]]>*/</script>
+{% if user %}
+<nav>
+	<a href="{{ url_for('user', username=g.username) }}{{ params() }}">{{ msg('main_page') }}</a> |
+	<form action="{{ url_for('request', username=g.username) }}{{ params() }}" method="post" id="request-update-form"><button class="request-update">{{ msg('request_update') }}</button> </form>
+	<script>/*<![CDATA[*/$('<a class="request-update" href="#">{{ msg('request_update') }}</a>').replaceAll('.request-update').click(function() { $('#request-update-form').submit(); return false; });/*]]>*/</script> |
+	<a href="{{ url_for('user_score', username='average') }}{{ params() }}">{{ msg('average_score') }}</a> |
+	<a href="{{ url_for('tbs', username=g.username) }}{{ params() }}">{{ msg('statistics-tbs') }}</a> |
+	<a href="{{ url_for('user_toolbox', username=g.username) }}{{ params() }}">{{ msg('toolbox') }}</a>
+</nav>
+{% else %}
+<form id="enroll" method="get" action="{{ url_for('.enroll') }}">
+	{{ params_hidden_value(ver=g.info_ver) }}
+	<p class="usage">{{ msg('navigation_without_alias') }}</p>
+	<p>
+		{{ msg('alias') }}: <input type="text" name="alias" value="" />
+		{{ msg('friend_id') }}: <input type="text" name="friend_id" value="" />
+		<input type="submit" value="{{ msg('enroll') }}" />
+	</p>
+</form>
+{% endif -%}
+</header>
+{% block body %}{% endblock %}
+<footer>
+<div id="information">
+	<p>Copyright 2010&ndash;2011 JubeatInfo team.</p>
+	<p>{{ msg('disclaimer') }}</p>
+	<p>{{ msg('user-agreement') }}</p>
+    <p>{{ msg('support') }}: <a href="mailto://jubeat_AT_3rddev_DOT_org">jubeat_AT_3rddev_DOT_org</a></p>
+</div>
+{% if DEBUG_QUERY -%}
+<pre style="margin:1em;overflow:auto">Queries:
+<? foreach ($selector->queries as $query) printf("%6.3fs  %s\n", $query[1], preg_replace('/\n\s*/', ' ', $query[0])); ?>
+</pre>
+{%- endif -%}
+</footer>
+</body>
+</html>

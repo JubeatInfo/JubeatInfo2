@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% set subtitle = user.alias %}
+{% block body %}
+<div id="user-stat-difftool">
+{% for IS_BASED in [True] %}
+	{%- include "user/stat.html" %}
+	{%- include "difftool.html" %}
+	{%- include "user/rating.html" %}
+	{%- include "user/comparing.html" %}
+	{%- include "user/score.html" %}
+{%- endfor %}
+<div class="strut"></div>
+</div>
+{% endblock %}

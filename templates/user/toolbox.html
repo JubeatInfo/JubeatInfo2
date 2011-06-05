@@ -1,0 +1,11 @@
+{% if not IS_BASED -%}
+	{% extends "base.html" -%}
+{% endif -%}
+
+{% block body %}
+<section id="toolbox">
+<h2>{{ msg('Toolbox') }}</h2>
+<h3>{{ msg('raw-files') }}: <a href="{{ url_for('raw', username=g.username, page='main') }}{{ params(date=None) }}">{{ msg('raw-main') }}</a>, <a href="{{ url_for('raw', username=g.username, page='score') }}{{ params('lang') }}">{{ msg('raw-score') }}</a></h3>
+<p><strong>{{ msg('raw-warning') }}</strong> {{ msg('raw-warning-jubegraph', '<a href="http://jubegraph.dyndns.org/jubeat_knit/user/'|safe + user.friend_id|string+'/">'|safe + msg('Jubegraph')|safe + '</a>'|safe) }} {{ msg('raw-warning-recommendation') }}</p>
+</section>
+{% endblock %}

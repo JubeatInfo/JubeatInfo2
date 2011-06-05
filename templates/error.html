@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block body %}
+<section id="error">
+<h2>{{ msg('Error') }} - {% block subtitle %}{% if error %}{{ error|string }}{% else %}{{ errortitle|if(errortitle, 'An Error Occured') }}{% endif %}{% endblock %}</h2>
+{%- if error %}
+{#{% if error.description %}<p>{{ error.description|safe }}</p>{% endif %}#}
+<p>{{ msg('err_http_' + error.code|string) }}</p>
+{%- endif %}
+{%- block errormsg %}
+{%- if errormsg %}
+<p>{{ msg('err_hint') }}</p>
+{%- endif %}
+<p>{{ errormsg }}</p>
+{%- endblock %}
+</section>
+{% endblock %}

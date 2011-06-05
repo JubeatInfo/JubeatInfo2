@@ -1,0 +1,57 @@
+{% if not IS_BASED -%}
+	{% extends "base.html" -%}
+{% endif -%}
+
+{% block body %}
+<section id="difftool">
+<h2>{{ msg('difftool') }}</h2>
+<div class="part" id="difftool-reset">
+	<a href="{{ g.path }}{{ params(rival=None, date=None, diff_date=None) }}">{{ msg('no_compare') }}</a>
+</div>
+<form class="part" id="difftool-rival" action="{{ g.path }}" method="get">
+	<label>{{ msg('compare_rival') }}:</label>
+	<input type="text" name="rival" value="{{ g.diffuser.alias|if(g.diffusername) }}" />
+	<input type="submit" value="{{ msg('diff') }}" />
+	{%- if g.diffusername %}
+	<br />(<a href="{{ url_for('user', username=g.diffuser.alias) }}{{ params(rival=g.username, diff_date=None) }}">{{ msg('swap_rival') }}</a>)
+	{%- endif %}
+	{{ params_hidden_value(rival=None, diff_date=None) }}
+</form>
+
+<div class="part" id="difftool-date">
+	<label>{{ msg('compare_date') }}:</label>
+	<div class="scroll">
+<!-- difftable block -->
+<table>
+<thead>
+<tr>
+	<td class="before">
+	{%- if g.diffdate -%}
+		<a href="{{ g.path }}{{ params(diff_date=None) }}">{{ msg('nodiff') }}</a>
+	{%- endif -%}
+	</td>
+	<th>{{ msg('now-date') }}</th>
+	<td class="after"><a href="{{ g.path }}{{ params(date=None) }}">{{ '◁'|if(g.date, '◀') }} {{ msg('after-date') }}</a></td>
+</tr>
+</thead>
+<tbody>
+{% for date in played_dates|reverse %}{% set date_str = date|string -%}
+<tr><td class="before">
+	{%- if not g.date or g.date > date_str -%}
+		<a href="{{ params(diff_date=date_str, rival=None) }}">{{ msg('before-date') }} {{ '▶'|if(g.diffdate == date_str, '▷') }}</a>
+	{%- endif -%}
+	</td>
+	<th>{{ date }}</th>
+	<td class="after">
+	{%- if not g.diffdate or g.diffdate < date_str -%}
+		<a href="{{ params(date=date_str) }}">{{ '◀'|if(g.date == date_str, '◁') }} {{ msg('after-date') }}</a>
+	{%- endif %}</td>
+</tr>
+{% endfor -%}
+</tbody>
+</table>
+<!-- end of block -->
+	</div>
+</div>
+</section>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% if not IS_BASED -%}
+    {% extends "base.html" -%}
+{% endif -%}
+
+{% block body %}
+{%- for IS_BASED in [True] %}
+	{%- include "stat/hist.html" %}
+	{%- include "stat/dist.html" %}
+	{%- include "difftool.html" %}
+{%- endfor %}
+{% endblock %}

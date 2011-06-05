@@ -1,0 +1,29 @@
+{% if not IS_BASED -%}
+	{% extends "base.html" -%}
+{% endif -%}
+
+{% if g.diffusername -%}
+	{% set DIFF_ICON = msg('icon_rival') -%}
+{% else -%}
+	{% if g.diffdate -%}
+		{% set DIFF_ICON = (g.diffdate|string)[5:10] -%}
+	{% else %}
+		{% set DIFF_ICON = msg('icon_avg') -%}
+	{% endif -%}
+{% endif -%}
+{% set EMPHASES = {0:' ', 1:msg('emphasis-draw'), 2:msg('emphasis-win'), -1:msg('emphasis-new')} -%}
+{% set DIFF_CLASSES = {-1:'id', 0:'in', 1:'iu'} -%}
+{% set DIFF_SIGNS = {-1:'', 0:'', 1:'+'} -%}
+
+{% set ICON_NCOLUMNS = 16 -%}
+{% set ICON_WIDTH = 30 -%}
+{% set ICON_HEIGHT = 30 -%}
+	
+{% block body %}
+<section id="music">
+<h2>{{ msg('scoreboard') }}</h2>
+<p>{{ msg('scoremode') }}: <a href="{{ g.path }}{{ params(mode=None) }}">{{ msg('raw_score') }}</a> / <a href="{{ params(mode='remain') }}">{{ msg('raw_score_from_exc') }}</a> / <a href="{{ params(mode='scaled') }}">{{ msg('scaled_score') }}</a><sup>1)</sup></p>
+<p><small>1) {{ msg('scaled_score_desc') }}</small></p>
+{% block score %}{% endblock %}
+</section>
+{% endblock %}

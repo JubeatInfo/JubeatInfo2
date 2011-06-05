@@ -1,0 +1,13 @@
+{% if not IS_BASED -%}
+    {% extends "base.html" -%}
+{% endif -%}
+
+{% block body %}
+{%- for IS_BASED in [True] %}
+	{%- include "graph/hist.html" %}
+	{%- if ranking %}
+	{%- include "graph/rank.html" %}
+	{%- endif %}
+	{%- include "difftool.html" %}
+{% endfor %}
+{% endblock %}

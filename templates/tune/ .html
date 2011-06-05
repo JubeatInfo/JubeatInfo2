@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block body %}
+{%- for IS_BASED in [True] %}
+<div id="detail-difftool">
+	{%- include "tune/detail.html" %}
+	{%- include "difftool.html" %}
+<div class="strut"></div>
+</div>
+	{% include "graph/hist.html" %}
+	{%- include "graph/rank.html" %}
+{%- endfor %}
+{% endblock %}

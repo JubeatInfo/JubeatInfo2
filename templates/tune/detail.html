@@ -1,0 +1,44 @@
+{% if not IS_BASED -%}
+	{% extends "base.html" -%}
+{% endif -%}
+
+{% block body %}
+<section id="tune-detail">
+<h2>{{ msg('tune-detail') }}: {{ subtitle }}</h2>
+<ul>
+	<li>{{ msg('music-title') }}: {{ music.title }} {% if music.localization is defined %}{{ music.localization.text }}{% endif %}</li>
+	<li>{{ msg('difficulty') }}: {% if dif_id > 0 %}{{ g.const.DIFFICULTY_NAMES[dif_id] }}{% else %}{{ msg('total') }}{% endif %}</li>
+	{%- if music.music_id > 1 %}
+	<li>{{ msg('artist') }}: {{ music.artist }}</li>
+	<li>{{ msg('bpm') }}: {{ music.bpm }}</li>
+	<li>{{ msg('level') }}: {{ music.tunes[dif_id].level }}</li>
+	<li>{{ msg('number-of-notes') }}: {{ music.tunes[dif_id].notes }}</li>
+	<li>{{ msg('version') }}: {{ music.version_name }}</li>
+	{%- endif %}
+</ul>
+{%- if playdata %}
+<ul>
+	<li>{{ msg('last_updated_date') }}: {{ playdata.date|string }}</li>
+	<li>{{ msg('score') }}: {{ playdata.score|numeric }}
+	{%- if music.music_id > 1 -%}
+		({{ playdata.remain_score|numeric }})</li>
+	<li>{{ msg('scaled_score') }}: {{ playdata.scaled_score|xformat(xform('real2')) }}{% if playdata.scaled_score > -3 %} ({{ 'Estimately, %s misses and %s greats' % playdata.analyze }}){% endif %}</li>
+	{%- endif %}
+</ul>
+{%- else %}
+<p>{{ msg('no-play-data') }}</p>
+{%- endif %}
+{%- if playdetail %}
+<ul>
+	<li>{{ msg('recorded-date') }}: {{ playdetail.Detail.date|string }}</li>
+	<li>{{ msg('play_count') }}: {{ playdetail.Detail.play_count|numeric }}</li>
+	<li>{{ msg('clear_count') }}: {{ playdetail.Detail.clear_count|numeric }}</li>
+	<li>{{ msg('fullcombo_count') }}: {{ playdetail.Detail.fullcombo_count|numeric }}</li>
+	<li>{{ msg('excellent_count') }}: {{ playdetail.Detail.excellent_count|numeric }}</li>
+	<li>{{ msg('recorded_rank') }}: {{ playdetail.Detail.rank|numeric }}</li>
+</ul>
+{%- else %}
+{% if music.music_id > 1 %}<p>{{ msg('no-detail-play-data') }}</p>{% endif %}
+{%- endif %}
+</section>
+{% endblock %}

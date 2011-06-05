@@ -1,0 +1,55 @@
+{% if not IS_BASED -%}
+	{% extends "base.html" -%}
+{% endif -%}
+
+{% set stats = score.stats -%}
+{% block body %}
+<section id="stat-comparing">
+<h2>{{ msg('statistics') }}</h2>
+<div class="scroll">
+<table>
+<thead>
+<tr class="diffs">
+	<th></th>
+	<th>{{ msg('total') }}</th>
+	{%- for ver_id in g.const.VERSION_RANGE|reverse if stats.ver[ver_id].count %}
+	<th{% if g.const.VERSION_NAMES[ver_id] != g.const.VERSION_CLASSES[ver_id] %}{{ {'class':"ver-ap"}|xmlattr }}{% endif %}>{{ g.const.VERSION_NAMES[ver_id] }}</th>
+	{%- endfor %}
+</tr>
+</thead>
+<tbody>
+{%- for dif_id, dif in g.const.DIFFICULTY_KEYS|dictsort %}
+<tr>
+	<th class="{{ dif }}">{{ dif|upper }}</th>
+	{%- for ver_id in [0] + g.const.VERSION_RANGE|reverse|list if stats.ver[ver_id].count %}
+	{%- set stat = stats.verdif[ver_id][dif_id] %}
+	<td><span class="win">{{ stat.win }}</span>-<span class="draw">{{ stat.draw }}</span>-<span class="lose">{{ stat.lose }}</span></td>
+	{%- endfor %}
+</tr>
+{%- endfor %}
+</tbody>
+<tbody>
+{%- for lv in range(10, 0, -1) %}
+<tr>
+	<th class="lv{{ lv }}">Lv{{ lv }}</th>
+	{%- for ver_id in [0] + g.const.VERSION_RANGE|reverse|list if stats.ver[ver_id].count %}
+	{%- set stat = stats.verlv[ver_id][lv] %}
+	<td><span class="win">{{ stat.win }}</span>-<span class="draw">{{ stat.draw }}</span>-<span class="lose">{{ stat.lose }}</span></td>
+	{%- endfor %}
+</tr>
+{%- endfor %}
+</tbody>
+<tfoot>
+<tr>
+	<th class="tot">TOT</th>
+	{%- for ver_id in [0] + g.const.VERSION_RANGE|reverse|list if stats.ver[ver_id].count %}
+	{%- set stat = stats.ver[ver_id] %}
+	<td><span class="win">{{ stat.win }}</span>-<span class="draw">{{ stat.draw }}</span>-<span class="lose">{{ stat.lose }}</span></td>
+
+	{%- endfor %}
+</tr>
+</tfoot>
+</table>
+</div>
+</section>
+{% endblock %}

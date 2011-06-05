@@ -1,0 +1,20 @@
+{% extends "graph/ .html" %}
+
+{% if not xfmt %}
+    {% set xfmt = xform('natural') %}
+{% endif %}
+
+{% block section_id %}rank{% endblock %}
+{% block section_title %}{{ msg('Statistics for All Users') }}: {% block subtitle %}{{ subtitle }}{% endblock %} <small>{{ msg('%d-users', ranking|length) }}</small>{% endblock %}
+{% block data_name %}Rank{% endblock %}
+
+{% block data_rows %}
+{%- for rank in ranking %}
+<tr{{ {'data-v':rank.value}|xmlattr }}
+	{%- if rank.is_mine %}{{ {'class':'highlight'}|xmlattr }}{% endif %}>
+	<th>#{{ rank.rank|numeric }}</th><td>{{ rank.value|xformat(xfmt) }}</td></tr>
+{%- endfor %}
+{% endblock %}
+
+{% block gather_func %}get_rank{% endblock %}
+{% block gather_options %}'rank', {nopoints:1}{% endblock %}

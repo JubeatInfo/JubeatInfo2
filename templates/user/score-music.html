@@ -1,0 +1,119 @@
+{% extends "user/score.base.html" %}
+{% block score %}
+<table cellspacing="0">
+<thead>
+<tr class="header">
+	<th class="meta" colspan="3">{{ msg('tracktitle') }}</th>
+	<th class="bsc" colspan="2">BASIC</th>
+	<th class="adv" colspan="2">ADVANCED</th>
+	<th class="ext" colspan="2">EXTREME</th>
+</tr>
+<tr class="sorting">
+	<th class="meta" colspan="3">
+		{{ link_order('version', desc=True) }}
+		{{ link_order('sort_id') }}
+		{{ link_order('title') }}
+	{%- for dif_id, dif in g.const.DIFFICULTY_KEYS|dictsort %}
+	<th class="{{ dif }}" colspan="2">
+		{{ link_order('score', desc=True) }}
+		{{ link_order('level', desc=True) }}
+		{{ link_order('notes', desc=True) }}
+		{{ link_order('date', desc=True) }}
+		<!--<?showorder($d.'diff', 'diff', true)?>--></th>
+	{%- endfor %}
+</tr>
+</thead>
+<tbody>
+{%- for r in score.data if score.stats.ver[r.music.version_id].count %}
+{%- set ICON_ID = r.music.sort_id - 1 %}
+{%- set ICON_POS = '%dpx %dpx' % (-ICON_WIDTH * (ICON_ID % ICON_NCOLUMNS), -ICON_HEIGHT * (ICON_ID / ICON_NCOLUMNS)|int) %}
+<tr>
+	<th class="m {{ r.music.version_key }}" colspan="3">
+		<img src="/images/blank.gif" width="{{ ICON_WIDTH }}" height="{{ ICON_HEIGHT }}" alt="{{ r.music.title }} icon" style="background-position:{{ ICON_POS }}" />
+		<strong class="m-title{{ ' fit'|if(r.music.has_long_title)|safe }}">{{ r.music.title }}{% if r.l10n %} <small>({{ r.l10n.text }})</small>{% endif %}</strong>
+		<span class="m-artist">{{ r.music.artist }}</span></th>
+	
+	{%- for dif_id, dif in g.const.DIFFICULTY_KEYS|dictsort %}
+	{%- set d1 = r[dif_id].data1 %}
+	{%- set d2 = r[dif_id].data2 %}
+	{%- set dr = r[dif_id].derived %}
+	{%- set EMPH = (' emph' + dr.emph|string)|if(dr.emph)|safe %}
+	<td class="{{ dif }} d{{ EMPH }}"><span>Level</span> {{ r.music[dif].level }}</td>
+	<td class="{{ dif }} r rating-{{ d1.grade }}{{ EMPH }}">
+		<a href="{{ url_for('tune', username=g.username, music_key=r.music.id, dif_key=dif) }}{{ params(order=None) }}"><span class="m-rating">{{ d1.grade }}</span> <span class="i"><strong>{{ d1.key_score|xformat(score_fmt) }}</strong><span>(</span><span class="ip">{% if d2.key_score %}<em>{{ DIFF_ICON }}</em>{% endif %}{{ d2.key_score|xformat(score_fmt) }}</span><span class="{{ DIFF_CLASSES[dr.diffsign] }}">{{ DIFF_SIGNS[dr.diffsign] }}{{ dr.diff|xformat(score_fmt) }}</span><span>)</span></span></a></td>
+	{%- endfor %}
+</tr>
+<tr class="more">
+	<td class="mi {{ r.music.version_key }}" colspan="3">
+		{%- if g.more -%}
+			<a class="a" href="#">R</a>&nbsp;
+		{%- endif -%}
+		BPM <span class="bpm-{{ r.music.bpm.category }}">{{ r.music.bpm|string }}</span>/ {{ msg('notes') }}
+		<span class="n-bsc">{{ r.music.bsc.notes }}</span>-<span class="n-adv">{{ r.music.adv.notes }}</span>-<span class="n-ext">{{ r.music.ext.notes }}</span>
+		<span class="vername">{{ r.music.version_name }}</span></td>
+
+	{%- for dif_id, dif in g.const.DIFFICULTY_KEYS|dictsort %}
+	{%- set d1 = r[dif_id].data1 %}
+	{%- set dr = r[dif_id].derived %}
+	{%- set EMPH = (' emph' + dr.emph|string)|if(dr.emph)|safe %}
+	<td class="{{ dif }} di{{ EMPH }}">{{ EMPHASES[dr.emph] }}</td>
+	<td class="{{ dif }} ri{{ EMPH }}">
+		{%- if g.more -%}
+			<? if($FULLCOMBOCOUNT||$GRADE=='EXC'): ?><span class="a" title="Full Combo">FC</span> '<?endif?><?iif($GRADE=='EXC','<span class="a" title="Excellent">EXC</span> ')?>
+		{%- endif -%}
+		{% if d1.date %}<time>{{ d1.date }}</time>{% else %}&nbsp;{% endif -%}
+	</td>
+	{%- endfor %}
+</tr>
+{%- endfor %}
+</tbody>
+<tfoot>
+{%- for ver_id in g.const.VERSION_RANGE2|reverse if score.stats.ver[ver_id].count %}
+<tr class="average">
+	<th class="mm" rowspan="2">{{ g.const.VERSION_NAMES[ver_id] }} {{ msg('title-average') }}</th>
+	{%- for dif_id, dif in g.const.DIFFICULTY_KEYS2|dictsort %}
+	{%- set d = score.stats.verdif[ver_id][dif_id] %}
+	{%- set EMPH = (' emph' + d.avgd.emph|string)|if(d.avgd.emph)|safe %}
+	<td class="{{ dif }} d{{ EMPH }}">&nbsp;</td>
+	<td class="{{ dif }} r rating-{{ d.avg1.grade }}{{ EMPH }}">
+		<a href="{{ url_for('tune', username=g.username, music_key='average', dif_key=dif) }}{{ params(order=None, mode=None) }}"><span class="m-rating">{{ d.avg1.grade }}</span> <span class="i"><strong>{{ d.avg1.score|xformat(score_fmt) }}</strong><span>(</span><span class="ip"><em>{{ DIFF_ICON }}</em>{{ d.avg2.score|xformat(score_fmt) }}</span><span class="{{ DIFF_CLASSES[d.avgd.diffsign] }}">{{ d.avgd.diff|xformat(score_fmt) }}</span><span>)</span></span></a></td>
+	{%- endfor %}
+</tr>
+<tr class="average more">
+	{%- for dif_id, dif in g.const.DIFFICULTY_KEYS2|dictsort %}
+	{%- set d = score.stats.verdif[ver_id][dif_id] %}
+	{%- set EMPH = (' emph' + d.avgd.emph|string)|if(d.avgd.emph)|safe %}
+	<td class="{{ dif }} di{{ EMPH }}">{{ EMPHASES[d.avgd.emph] }}</td>
+	<td class="{{ dif }} ri{{ EMPH }}"><time>{{ d.max_date }}</time></td>
+	{%- endfor %}
+</tr>
+{% endfor %}
+<tr class="total">
+	<th class="mm Total" rowspan="2">{{ msg('title-total') }}</th> 
+	{%- for dif_id, dif in g.const.DIFFICULTY_KEYS2|dictsort %}
+	{%- set data = score.stats.dif[dif_id] %}
+	{%- set EMPH = (' emph' + data.avgd.emph|string)|if(data.avgd.emph)|safe %}
+	<td class="{{ dif }} rr{{ EMPH }}" colspan="2">
+		<a href="{{ url_for('tune', username=g.username, music_key='total', dif_key=dif) }}{{ params(order=None, mode=None) }}"><span class="i"><strong>{{ data.sum1|xformat(score_fmt) }}</strong><span>(</span><span class="ip"><em>{{ DIFF_ICON }}</em>{{ data.sum2|xformat(score_fmt) }}</span><span class="{{ DIFF_CLASSES[data.sumd.diffsign] }}">{{ data.sumd.diff|xformat(score_fmt) }}</span><span>)</span></span></a></td>
+	{%- endfor %}
+</tr>
+<tr class="total more">
+	{%- for dif_id, dif in g.const.DIFFICULTY_KEYS2|dictsort %}
+	{%- set data = score.stats.dif[dif_id] %}
+	{%- set EMPH = (' emph' + data.sumd.emph|string)|if(data.sumd.emph)|safe %}
+	<td class="{{ dif }} rri{{ EMPH }}" colspan="2"><time>{{ data.max_date }}</time></td>
+	{%- endfor %}
+</tr>
+{#
+{%- if g.diffuser %}
+<tr class="rival-summary">
+	<th class="mm">{{ msg('rival-summary') }}</th>
+	{%- for dif_id, dif in g.const.DIFFICULTY_KEYS2|dictsort %}
+	<td class="{{ dif }}" colspan="2"><span><span class="rs-win">{{ '%03d'|format(score.stats.dif[dif_id].vict) }}</span>:<span class="rs-draw">{{ '%03d'|format(score.stats.dif[dif_id].draw) }}</span>:<span class="rs-lose">{{ '%03d'|format(score.stats.dif[dif_id].lose) }}</span></span></td>
+	{%- endfor %}
+</tr>
+{%- endif -%}
+#}
+</tfoot>
+</table>
+{% endblock %}

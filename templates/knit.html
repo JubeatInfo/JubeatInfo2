@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div id="index-twitter">
+<section id="index">
+<h2><a href="/{{ params('lang') }}">http://jubeat.3rddev.org</a></h2>
+<!-- <p style="color:red">이어뮤즈 사용계정 만료로 업데이트를 일시 중지합니다. 가까운운 시일 내에 복구할 수 있도록 하겠습니다. 혹시 임시로 결제 중인 계정을 지원해 주실 수 있는 분은 사이트 아래의 주소로 메일 주세요.</p> -->
+{{ msg('notice-ie6') }}
+<h3>Ripples:</h3>
+<ul>
+	<li><del>{{ 'ripples-app-desc'|msg }}: <a href="http://jubeat.3rddev.org/ripples/xml-14400025851317">http://jubeat.3rddev.org/ripples/xml-@YOURFRIENDID@</a></del></li>
+</ul>
+<h3>Knit:</h3>
+<ul>
+	<li>{{ 'knit-massda-desc'|msg }}</li>
+	<li>{{ 'knit-humanreadable-desc'|msg }}</li>
+	<li>{{ 'knit-statistics-desc'|msg }}</li>
+	<li>{{ 'knit-iphoneapp-desc'|msg }} <a href="http://itunes.apple.com/us/app/jubeatinfo/id363449676?mt=8">Download from Appstore <img src="http://3rdpub.com/static/appstore.gif" /></a></li> 
+</ul>
+<p>{{ 'knit-service-beta-desc'|msg }}</p>
+<ul>
+	<li>{{ 'knit-statistics-adv-desc'|msg }}</li>
+</ul>
+<p>{{ 'knit-service-developing-desc'|msg }}</p>
+<ul>
+	<li>{{ 'knit-mobileweb-desc'|msg }}</li>
+</ul>
+<h3>{{ 'policy'|msg }}</h3>
+<ul>
+	<li>{{ 'policy-update'|msg }}</li>
+	<li>{{ 'policy-unstable'|msg }}</li>
+	<li>{{ 'policy-deny'|msg }}</li>
+</ul>
+<h3>{{ 'FAQ'|msg }}</h3>
+<ul>
+	<dt>{{ 'faq-user-from-japan-question'|msg }}</dt>
+		<dd>{{ 'faq-user-from-japan-answer'|msg }}</dd>
+		<dd>(日本の居住者は、e-AMUSEMENT PASSとJubegraphのご利用をお願い致します。)</dd>
+	<dt>{{ 'faq-more-information-question'|msg }}</dt>
+		<dd>{{ 'faq-more-information-answer'|msg }}</dd>
+	<!--<li><?='faq-'|msg?></li>-->
+</ul>
+</section>
+{% for IS_BASED in [True] %}
+	{% include "twitter.html" %}
+{% endfor %}
+</div>
+<div class=\"strut\"></div>
+{% endblock %}

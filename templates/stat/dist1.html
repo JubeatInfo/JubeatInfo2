@@ -1,0 +1,30 @@
+{% if not IS_BASED -%}
+    {% extends "base.html" -%}
+{% endif -%}
+
+{% block body %}
+{%- set BAR_SCALE = 99 %}
+{%- set BAR_TOTAL = distribution|length %}
+<section id="alluser-stats">
+<h2>{{ msg('Statistics for All Users') }}: {% for stat in stats %}{{ msg(stat) }} {% endfor %}</h2>
+<table>
+<thead>
+<tr><th>{{ msg('stats-key') }}</th><th>{{ msg('stats-count') }}</th><th></th></tr>
+</thead>
+<tbody>
+{%- for item in distribution.data %}
+<tr><th>
+	{%- for stat in stats %}
+	{%- set stat_path = stat + '_path' %}
+	{%- if item[stat_path] is defined %}<img src="{{ item[stat_path] }}" alt="{{ item[stat] }}" />{% endif -%}
+	{{ l10n(item[stat]) }}
+	{%- endfor %}</th><td>{{ item.count }}</td>
+	<td class="bar"><span style="width:{{ '%.2f'|format(item.count / BAR_TOTAL * BAR_SCALE) }}%">&nbsp;</span></td></tr>
+{%- endfor %}
+</tbody>
+<tfoot>
+<tr><th>{{ msg('stats-total') }}</th><td>{{ BAR_TOTAL }}</td><td class="bar"><span style="width:{{ BAR_SCALE }}%">&nbsp;</span></td></tr>
+</tfoot>
+</table>
+</section>
+{% endblock %}
