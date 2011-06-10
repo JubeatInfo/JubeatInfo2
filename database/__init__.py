@@ -719,8 +719,9 @@ class PlayData(Base):
         scaled = -self.scaled_score
         if scaled is None:
             return None, None
-        miss = int(scaled / 3) * 3
-        great = int(scaled % 3 / Decimal('0.3'))
+        rounded = int(scaled / Decimal('0.1'))
+        miss = rounded % 3
+        great = (rounded - miss * 10) / 3
         return miss, great
 
     def __init__(self, friend_id=0, music_id=0, dif_id=0, date=None,

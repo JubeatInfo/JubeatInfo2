@@ -22,19 +22,23 @@
 	<li>{{ msg('score') }}: {{ playdata.score|numeric }}
 	{%- if music.music_id > 1 -%}
 		({{ playdata.remain_score|numeric }})</li>
-	<li>{{ msg('scaled_score') }}: {{ playdata.scaled_score|xformat(xform('real2')) }}{% if playdata.scaled_score > -3 %} ({{ 'Estimately, %s misses and %s greats' % playdata.analyze }}){% endif %}</li>
+	<li>{{ msg('scaled_score') }}: {{ playdata.scaled_score|xformat(xform('real2')) }}{% if playdata.score >= 900000 %} ({{ 'Estimately, %s misses and %s greats' % playdata.analyze }}){% endif %}</li>
 	{%- endif %}
 </ul>
 {%- else %}
 <p>{{ msg('no-play-data') }}</p>
 {%- endif %}
 {%- if playdetail %}
+{%- set duserdata = user.userdata(playdetail.Detail.date) %}
+{%- set d = playdetail.Detail %}
+{%- set xperc = xform('percent') %}
 <ul>
-	<li>{{ msg('recorded-date') }}: {{ playdetail.Detail.date|string }}</li>
-	<li>{{ msg('play_count') }}: {{ playdetail.Detail.play_count|numeric }}</li>
-	<li>{{ msg('clear_count') }}: {{ playdetail.Detail.clear_count|numeric }}</li>
-	<li>{{ msg('fullcombo_count') }}: {{ playdetail.Detail.fullcombo_count|numeric }}</li>
-	<li>{{ msg('excellent_count') }}: {{ playdetail.Detail.excellent_count|numeric }}</li>
+	<li>{{ msg('recorded-date') }}: {{ d.date|string }}</li>
+	<li>{{ msg('play_count') }}: {{ d.play_count|numeric }} ({{ (d.play_count / duserdata.play_count)|xformat(xperc) }})</li>
+	<li>{{ msg('clear_count') }}: {{ d.clear_count|numeric }} ({{ (d.clear_count / d.play_count)|xformat(xperc) }})</li>
+	<li>{{ msg('fullcombo_count') }}: {{ d.fullcombo_count|numeric }} ({{ (d.fullcombo_count / d.play_count)|xformat(xperc) }})</li>
+	<li>{{ msg('excellent_count') }}: {{ playdetail.Detail.excellent_count|numeric }}
+		({{ (d.excellent_count / d.play_count)|xformat(xperc) }} / {{ (d.excellent_count / d.fullcombo_count)|xformat(xperc) }})</li>
 	<li>{{ msg('recorded_rank') }}: {{ playdetail.Detail.rank|numeric }}</li>
 </ul>
 {%- else %}
