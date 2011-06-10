@@ -6,7 +6,7 @@
 <section id="user">
 <h2>{{ msg('userstat') }} <small>({{ msg('as-of-%s', '<time>' +  userdata.timestamp|string + '</time>')|safe }})</small></h2>
 <img src="{{ userdata.knit_jubility_icon_path }}" width="113" height="113" alt="{{ userdata.jubility_icon }}" class="u-jubilityicon" />
-<p><strong class="u-playername">{{ userdata.card_name }}</strong>
+<p><strong class="u-playername">{{ userdata.card_name }}</strong><sub>({{ msg('Number of Users for this name') }}: {{ user.clone_count }})</sub>
 	{%- if g.more -%}
 		<small>(<a href="https://www.ea-pass.konami.net/contents/jubeat/knit/play_top.do?fid={{ userdata.friend_id }}&amp;blog=1" class="u-fid">{{ userdata.friend_id }}></a>)</small>
 	{%- endif -%}

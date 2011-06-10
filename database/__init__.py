@@ -352,6 +352,10 @@ class User(Base):
             values(UserData.last_date)
         return [value.last_date for value in values]
 
+    @property
+    def clone_count(self):
+        return UserData.filter_by(card_name=self.alias).group_by(UserData.friend_id).count()
+
     def stat_history(self, stat, desc=False, dates=None):
         if type(getattr(UserData, stat)) is property:
             return self.stat_history_by_property(stat, desc, dates)
