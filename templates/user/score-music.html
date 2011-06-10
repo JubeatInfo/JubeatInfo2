@@ -19,7 +19,7 @@
 		{{ link_order('level', desc=True) }}
 		{{ link_order('notes', desc=True) }}
 		{{ link_order('date', desc=True) }}
-		<!--<?showorder($d.'diff', 'diff', true)?>--></th>
+		{{ link_order('diff', desc=True) }}</th>
 	{%- endfor %}
 </tr>
 </thead>
