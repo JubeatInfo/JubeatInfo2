@@ -41,6 +41,7 @@ class HistoryDataSet(object):
                 label=item.date, diffvalue=item.value, value=None)
 
     def seal(self, last_date=None, diff_last_date=None):
+        """
         if True: #self.skipped and last_date:
             unixtime = time.mktime(last_date.timetuple())
             item = NamedDict(
@@ -54,7 +55,7 @@ class HistoryDataSet(object):
                 date=diff_last_date, unixtime=unixtime, value=self.diffprev)
             self.prev = None
             self.put_diff(item)
-        
+        """
         self._keys = self.data.keys()
         self._keys.sort()
         self._keys.reverse()
@@ -118,12 +119,12 @@ class DistributionDataSet(object):
         self.domains = domains
         self.degree = len(domains)
         self.data = []
-        
+
     def put(self, item):
         self.data.append(item)
 
     def seal(self):
-        pass
+        self.total = sum(map(lambda item: item.count, self.data))
 
     def put_all(self, items):
         self.data += items

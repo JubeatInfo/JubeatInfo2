@@ -4,7 +4,7 @@
 
 {% block body %}
 {%- set BAR_SCALE = 99 %}
-{%- set BAR_TOTAL = distribution|length %}
+{%- set BAR_TOTAL = distribution.total %}
 <section id="alluser-stats">
 <h2>{{ msg('Statistics for All Users') }}: {% for stat in stats %}{{ msg(stat) }} {% endfor %}</h2>
 <table>
