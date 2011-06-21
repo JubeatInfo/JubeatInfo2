@@ -539,15 +539,16 @@ class UserData(Base):
             (self.friend_id, self.card_name, self.last_date, self.timestamp)
 
     @classmethod
-    def recent_dates(cls, date=None):
-        """Set of recent play date just before given date for all users."""
+    def recent_times(cls, date=None):
+        """Set of recent play timestamp just before given date for all users."""
 
-        recent_dates =\
-            select([cls.friend_id, func.max(cls.date).label('recent_date')]).\
+        times =\
+            select([cls.friend_id, 
+                    func.max(cls.timestamp).label('recent_time')]).\
                 where(cls.friend_id > 0)
         if date is not None:
-            recent_dates = recent_dates.where(cls.last_date <= date)
-        return recent_dates.group_by(cls.friend_id).alias()
+            times = times.where(cls.last_date <= date)
+        return times.group_by(cls.friend_id).alias()
 
     @classmethod
     def ranking(cls, stat, friend_id=0, date=None, desc=True):
@@ -560,24 +561,24 @@ class UserData(Base):
     @classmethod
     def ranking_by_query(cls, stat, friend_id=0, date=None, desc=True):
         order = 'value' if not desc else sqlalchemy.desc('value')
-        dates = cls.recent_dates(date)
+        times = cls.recent_times(date)
         val_col = getattr(cls, stat).label('value')
         query = session.\
             query(val_col,
                 (cls.friend_id == friend_id).label('is_mine')).\
-            filter(cls.friend_id == dates.c.friend_id). \
-            filter(cls.last_date == dates.c.recent_date). \
+            filter(cls.friend_id == times.c.friend_id). \
+            filter(cls.timestamp == times.c.recent_time). \
             order_by(order)
         return query
 
     @classmethod
     def ranking_by_property(cls, stat, friend_id=0, date=None, desc=True):
         return False # TODO: cache required
-        dates = cls.recent_dates(date)
+        dates = cls.recent_times(date)
         query = session.\
             query(cls, (cls.friend_id == friend_id).label('is_mine')).\
             filter(cls.friend_id == dates.c.friend_id).\
-            filter(cls.last_date == dates.c.recent_date)
+            filter(cls.timestamp == dates.c.recent_time)
         
         RankItem = collections.namedtuple('RankItem', ['value', 'is_mine']) 
         data = []
@@ -591,7 +592,7 @@ class UserData(Base):
     def distribution(cls, stats, friend_id=0, date=None):
         """Export distribution of selected user statistics."""
 
-        dates = cls.recent_dates(date)
+        times = cls.recent_times(date)
         valueattrs = []
         for i, stat in enumerate(stats):
             valueattrs.append(getattr(cls, stat))
@@ -600,12 +601,13 @@ class UserData(Base):
                 valueattrs.append(pathattr.label(stat + '_path'))
             except AttributeError:
                 pass
+        
         query = session.\
             query(func.count('*').label('count'),
                 func.max(cls.friend_id == friend_id).label('is_mine'),
                 *valueattrs).\
-            filter(cls.friend_id == dates.c.friend_id).\
-            filter(cls.last_date == dates.c.recent_date)
+            filter(cls.friend_id == times.c.friend_id).\
+            filter(cls.timestamp == times.c.recent_time)
         for stat in stats:
             query = query.group_by(getattr(cls, stat))
         query = query.order_by(desc('count'))
