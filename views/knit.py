@@ -412,6 +412,10 @@ def enroll(username, friend_id):
     database.session.add(database.UserRequest(friend_id))
     return render_template('enroll.html', username=username)
 
+@knit.route('/<username>/about')
+def about(username):
+    return render_template('about/ .html', username=username)
+
 @knit.route('/<username>/tbs')
 def tbs(username):
     return tune(username=username, music_key='total', dif_key=u'0')
