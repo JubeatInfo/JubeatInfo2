@@ -545,7 +545,7 @@ class UserData(Base):
         times =\
             select([cls.friend_id, 
                     func.max(cls.timestamp).label('recent_time')]).\
-                where(cls.friend_id > 0)
+                where(cls.friend_id > 10)
         if date is not None:
             times = times.where(cls.last_date <= date)
         return times.group_by(cls.friend_id).alias()
